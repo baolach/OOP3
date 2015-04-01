@@ -1,0 +1,40 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#AEE8E9">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Enter two numbers"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="#040329"
+            android:paddingTop="25dp" />
+
+
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:text="Number1"
+
+            android:textColor="#040329"
+            android:id="@+id/number1" />
+
+
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:text="Number2"
+            android:textColor="#040329"
+            android:id="@+id/Number2"
+            android:layout_column="0" />
+
+
+</TableLayout>
