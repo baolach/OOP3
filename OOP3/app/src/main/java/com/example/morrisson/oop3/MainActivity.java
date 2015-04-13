@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
     // can support more than one process at a time
     private class DownloadData extends AsyncTask<String, Void, String> { // (url, process not needed, what we return back- contents)
 
-        String myData;
+        String myData;// = "http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing";
         protected String doInBackground(String...urls){
             try{
                 myData = downloadData(urls[0]);
@@ -63,25 +63,28 @@ public class MainActivity extends ActionBarActivity {
                 return "Unable to download source file";
             }
 
-            return "";
+            return myData;
         }
 
         protected void onPostExecute(String result){
-            Log.d("OnPostExecute", myData);
-            textView.setText(myData);
+
+            if (myData != null) {
+                Log.d("OnPostExecute", myData);
+                textView.setText(myData);
+            }
 
         }
 
         private String downloadData(String theUrl) throws IOException{ // if theres an error we want to throw it back to the try block to deal with it
-            int BUFFER_SIZE = 500000; // the url ywe want to download from
+            int BUFFER_SIZE = 50000; // the url ywe want to download from
             InputStream is = null;
 
             String contents = "";
             try{
                 URL url = new URL(theUrl);
                 HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(100000); // give up after 10000 milliseconds (10 secs)
-                conn.setConnectTimeout(150000);
+                conn.setReadTimeout(10000); // give up after 10000 milliseconds (10 secs)
+                conn.setConnectTimeout(15000);
                 conn.setRequestMethod("GET"); // standard for accessing data
                 conn.setDoInput(true);
                 int response = conn.getResponseCode();
