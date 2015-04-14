@@ -6,25 +6,57 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+//import android.R
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    TextView textView;
+    Button btnParse;
+    ListView listApps;
+    String myData;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.textView1);
-        new DownloadData().execute("http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml"); // http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml// http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing
+        btnParse = (Button) findViewById(R.id.btnParse);
+        listApps = (ListView) findViewById(R.id.listApps);
+
+        btnParse.setOnClickListener(new View.OnClickListener()
+        {
+
+            public void onClick(View v)
+            {
+                ParseApplications parse = new ParseApplications(myData);
+                boolean operationStatus = parse.process();
+                if(operationStatus)
+                {
+                    ArrayList<Application> allApps = parse.getApplications();
+
+                    ArrayAdapter<Application> adapter = new ArrayAdapter<Application>(MainActivity.this, R.layout.list_item, allApps); // error here as you must create layout > res.layout.rightclick.new android xml
+                    listApps.setVisibility(listApps.VISIBLE);
+                    listApps.setAdapter(adapter);
+                }else
+                {
+                    Log.d("MainActivity","Error parsing file");
+                }
+            }
+        });
+
+        new DownloadData().execute("http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing");//http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topfreeapplications/limit=10/xml // http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing
     }
 
 
@@ -52,39 +84,40 @@ public class MainActivity extends ActionBarActivity {
 
 
     // can support more than one process at a time
-    private class DownloadData extends AsyncTask<String, Void, String> { // (url, process not needed, what we return back- contents)
+    private class DownloadData extends AsyncTask<String, Void, String>
+    { // (url, process not needed, what we return back- contents)
 
-        String myData;// = "http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing";
+        String Data;// = "http://www.hostelworld.com/travel-features/155859/top-destinations-for-inter-railing";
         protected String doInBackground(String...urls){
             try{
-                myData = downloadData(urls[0]);
+                Data = downloadData(urls[0]);
 
             } catch(IOException e){
                 return "Unable to download source file";
             }
 
-            return myData;
+            return ""; //myData; ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
         protected void onPostExecute(String result){
 
             if (myData != null) {
-                Log.d("OnPostExecute", myData);
-                textView.setText(myData);
+                Log.d("OnPostExecute", Data);
+                myData = Data;
             }
 
         }
 
         private String downloadData(String theUrl) throws IOException{ // if theres an error we want to throw it back to the try block to deal with it
-            int BUFFER_SIZE = 50000; // the url ywe want to download from
+            int BUFFER_SIZE = 500000; // the url ywe want to download from
             InputStream is = null;
 
             String contents = "";
             try{
                 URL url = new URL(theUrl);
                 HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000); // give up after 10000 milliseconds (10 secs)
-                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(100000); // give up after 10000 milliseconds (10 secs)
+                conn.setConnectTimeout(150000);
                 conn.setRequestMethod("GET"); // standard for accessing data
                 conn.setDoInput(true);
                 int response = conn.getResponseCode();
@@ -94,7 +127,8 @@ public class MainActivity extends ActionBarActivity {
                 InputStreamReader isr = new InputStreamReader(is);
                 int charRead;
                 char[] inputBuffer = new char[BUFFER_SIZE];
-                try{
+                try
+                {
                     while((charRead = isr.read(inputBuffer))>0)
                     {
                         String readString = String.copyValueOf(inputBuffer, 0, charRead);
@@ -119,4 +153,4 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
-    }
+}
