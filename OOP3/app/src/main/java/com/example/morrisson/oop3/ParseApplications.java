@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 // make sense of the data being passed to it
 public class ParseApplications{
-    private String alldata; // internally stores the xml being sent over
+    public String alldata; // internally stores the xml being sent over
     private ArrayList<Application> applications; // contains all the applications- an array of applications (stores details for each app)
 
     public ArrayList<Application> getApplications()
